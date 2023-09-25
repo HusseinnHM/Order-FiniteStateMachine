@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderSample.API", "OrderSample.API\OrderSample.API.csproj", "{AC161CC0-6C63-457D-B3E9-7B8F843E965E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FiniteStateMachine", "FiniteStateMachine\FiniteStateMachine.csproj", "{7A0F743A-15D2-4858-8F29-6BC065DEEA47}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SalutionItems", "SalutionItems", "{0F9BF28B-2E6D-45A5-9AE0-47E0DA6B6A55}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AC161CC0-6C63-457D-B3E9-7B8F843E965E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC161CC0-6C63-457D-B3E9-7B8F843E965E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC161CC0-6C63-457D-B3E9-7B8F843E965E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC161CC0-6C63-457D-B3E9-7B8F843E965E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A0F743A-15D2-4858-8F29-6BC065DEEA47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A0F743A-15D2-4858-8F29-6BC065DEEA47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A0F743A-15D2-4858-8F29-6BC065DEEA47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A0F743A-15D2-4858-8F29-6BC065DEEA47}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
