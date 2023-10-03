@@ -29,7 +29,7 @@ public class CommandConfiguration<TState, TCommand>
 
     public CommandConfiguration<TState, TCommand> If<TIfParams>(Func<TIfParams, bool> predicate)
     {
-        _ifBehaviors.Add(new IfBehavior<TState, TCommand>.Sync(t => (bool)predicate.DynamicInvoke(t, t.IfParameters)!));
+        _ifBehaviors.Add(new IfBehavior<TState, TCommand>.Sync(t => predicate.Invoke((TIfParams)t.IfParameters!)));
         return this;
     }
 
@@ -58,8 +58,7 @@ public class CommandConfiguration<TState, TCommand>
 
     public CommandConfiguration<TState, TCommand> IfAsync<TIfParams>(Func<TIfParams, ValueTask<bool>> predicate)
     {
-        _ifBehaviors.Add(new IfBehavior<TState, TCommand>.Async(t =>
-            (ValueTask<bool>)predicate.DynamicInvoke(t, t.IfParameters)!));
+        _ifBehaviors.Add(new IfBehavior<TState, TCommand>.Async(t => predicate.Invoke((TIfParams)t.IfParameters!)));
         return this;
     }
 
@@ -81,6 +80,18 @@ public class CommandConfiguration<TState, TCommand>
 
     #region OnExecute
 
+    public CommandConfiguration<TState, TCommand> OnExecute(Action action)
+    {
+        _actionBehaviors.Add(new Behavior<TState, TCommand>.Sync(_ => action()));
+        return this;
+    }
+
+    public CommandConfiguration<TState, TCommand> OnExecute<TCommandParams>(Action<TCommandParams> action)
+    {
+        _actionBehaviors.Add(new Behavior<TState, TCommand>.Sync(t => action.DynamicInvoke(t.CommandParameters)));
+        return this;
+    }
+
     public CommandConfiguration<TState, TCommand> OnExecute(Action<Transition<TState, TCommand>> action)
     {
         _actionBehaviors.Add(new Behavior<TState, TCommand>.Sync(action));
@@ -95,15 +106,32 @@ public class CommandConfiguration<TState, TCommand>
         return this;
     }
 
-    public CommandConfiguration<TState, TCommand> OnExecute(Action action)
+    #endregion
+
+    #region OnExecuteAsync
+
+    public CommandConfiguration<TState, TCommand> OnExecuteAsync(Func<Task> action)
     {
-        _actionBehaviors.Add(new Behavior<TState, TCommand>.Sync(_ => action()));
+        _actionBehaviors.Add(new Behavior<TState, TCommand>.Async(_ => action()));
         return this;
     }
 
-    public CommandConfiguration<TState, TCommand> OnExecute<TCommandParams>(Action<TCommandParams> action)
+    public CommandConfiguration<TState, TCommand> OnExecuteAsync<TCommandParams>(Func<TCommandParams, Task> action)
     {
-        _actionBehaviors.Add(new Behavior<TState, TCommand>.Sync(t => action.DynamicInvoke(t.CommandParameters)));
+        _actionBehaviors.Add(new Behavior<TState, TCommand>.Async(t => action.Invoke((TCommandParams)t.CommandParameters!)));
+        return this;
+    }
+
+    public CommandConfiguration<TState, TCommand> OnExecuteAsync(Func<Transition<TState, TCommand>, Task> action)
+    {
+        _actionBehaviors.Add(new Behavior<TState, TCommand>.Async(action));
+        return this;
+    }
+
+    public CommandConfiguration<TState, TCommand> OnExecuteAsync<TCommandParams>(
+        Func<Transition<TState, TCommand>, TCommandParams, Task> action)
+    {
+        _actionBehaviors.Add(new Behavior<TState, TCommand>.Async(t => action(t, (TCommandParams)t.CommandParameters!)));
         return this;
     }
 
