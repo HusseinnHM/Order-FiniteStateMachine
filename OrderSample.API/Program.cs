@@ -1,8 +1,6 @@
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
-using OrderSample.API;
 using OrderSample.API.DbContexts;
 using OrderSample.API.Endpoints;
 using OrderSample.API.Entities;
