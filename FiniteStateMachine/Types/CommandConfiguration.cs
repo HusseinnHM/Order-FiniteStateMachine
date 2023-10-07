@@ -87,7 +87,7 @@ public class CommandConfiguration<TState, TCommand>
 
     public CommandConfiguration<TState, TCommand> OnExecute<TCommandParams>(Action<TCommandParams> action)
     {
-        _actionBehaviors.Add(new Behavior<TState, TCommand>.Sync(t => action.DynamicInvoke(t.CommandParameters<TCommandParams>())));
+        _actionBehaviors.Add(new Behavior<TState, TCommand>.Sync(t => action.Invoke(t.CommandParameters<TCommandParams>())));
         return this;
     }
 
