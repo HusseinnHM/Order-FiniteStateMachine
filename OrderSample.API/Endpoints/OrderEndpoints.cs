@@ -51,13 +51,13 @@ public static class OrderEndpoints
     {
         var order = await context.Orders.FirstAsync(o => o.Id == request.Id);
         var stateMachine = new OrderStateMachine(order);
-        var isMoveToNex = await stateMachine.FireWithCommandParamsAsync(OrderCommand.ConfirmByCustomer,
+        var isFired = await stateMachine.FireWithCommandParamsAsync(OrderCommand.ConfirmByCustomer,
             (currentUserAccessor.CurrentUserId(), request.DeliveryAddress));
         await context.SaveChangesAsync();
 
         return Results.Ok(new
         {
-            isMoveToNex,
+            isFired,
             order
         });
     }
@@ -67,13 +67,12 @@ public static class OrderEndpoints
     {
         var order = await context.Orders.FirstAsync(o => o.Id == request.Id);
         var stateMachine = new OrderStateMachine(order);
-        var isMoveToNex = await stateMachine.FireWithCommandParamsAsync(OrderCommand.AssignWarehouseWorker,
-            request.WarehouseWorkerId);
+        var isFired = await stateMachine.FireWithCommandParamsAsync(OrderCommand.AssignWarehouseWorker, request.WarehouseWorkerId);
         await context.SaveChangesAsync();
 
         return Results.Ok(new
         {
-            isMoveToNex,
+            isFired,
             order
         });
     }
@@ -82,12 +81,12 @@ public static class OrderEndpoints
     {
         var order = await context.Orders.FirstAsync(o => o.Id == id);
         var stateMachine = new OrderStateMachine(order);
-        var isMoveToNex = await stateMachine.FireAsync(OrderCommand.CollectOrder);
+        var isFired = await stateMachine.FireAsync(OrderCommand.CollectOrder);
         await context.SaveChangesAsync();
 
         return Results.Ok(new
         {
-            isMoveToNex,
+            isFired,
             order
         });
     }
@@ -98,13 +97,13 @@ public static class OrderEndpoints
     {
         var order = await context.Orders.FirstAsync(o => o.Id == request.Id);
         var stateMachine = new OrderStateMachine(order);
-        var isMoveToNex = await stateMachine.FireWithCommandParamsAsync(OrderCommand.ConfirmShippingAndReceivingClerk, request);
+        var isFired = await stateMachine.FireWithCommandParamsAsync(OrderCommand.ConfirmShippingAndReceivingClerk, request);
 
         await context.SaveChangesAsync();
 
         return Results.Ok(new
         {
-            isMoveToNex,
+            isFired,
             order
         });
     }
@@ -114,12 +113,12 @@ public static class OrderEndpoints
     {
         var order = await context.Orders.FirstAsync(o => o.Id == request.Id);
         var stateMachine = new OrderStateMachine(order);
-        var isMoveToNex = await stateMachine.FireWithCommandParamsAsync(OrderCommand.Cancel, request.Reason);
+        var isFired = await stateMachine.FireWithCommandParamsAsync(OrderCommand.Cancel, request.Reason);
         await context.SaveChangesAsync();
 
         return Results.Ok(new
         {
-            isMoveToNex,
+            isFired,
             order
         });
     }
@@ -128,11 +127,11 @@ public static class OrderEndpoints
     {
         var order = await context.Orders.FirstAsync(o => o.Id == id);
         var stateMachine = new OrderStateMachine(order);
-        var isMoveToNex = await stateMachine.FireAsync(orderCommand);
+        var isFired = await stateMachine.FireAsync(orderCommand);
         await context.SaveChangesAsync();
         return Results.Ok(new
         {
-            isMoveToNex,
+            isFired,
             order
         });
     }
