@@ -140,7 +140,10 @@ public class CommandConfiguration<TState, TCommand>
     {
         foreach (var behavior in _ifBehaviors)
         {
-            return behavior.Execute(transition);
+            if (!behavior.Execute(transition))
+            {
+                return false;
+            }
         }
 
         return true;
@@ -151,7 +154,10 @@ public class CommandConfiguration<TState, TCommand>
     {
         foreach (var behavior in _ifBehaviors)
         {
-            return await behavior.ExecuteAsync(transition);
+            if (!await behavior.ExecuteAsync(transition))
+            {
+                return false;
+            }
         }
 
         return true;
