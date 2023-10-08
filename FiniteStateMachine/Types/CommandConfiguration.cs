@@ -136,6 +136,16 @@ public class CommandConfiguration<TState, TCommand>
 
     #endregion
 
+    internal bool Can(Transition<TState, TCommand> transition)
+    {
+        foreach (var behavior in _ifBehaviors)
+        {
+            return behavior.Execute(transition);
+        }
+
+        return true;
+    }
+
 
     internal async ValueTask<bool> CanAsync(Transition<TState, TCommand> transition)
     {
@@ -147,6 +157,14 @@ public class CommandConfiguration<TState, TCommand>
         return true;
     }
 
+
+    internal void Execute(Transition<TState, TCommand> transition)
+    {
+        foreach (var behavior in _actionBehaviors)
+        {
+            behavior.Execute(transition);
+        }
+    }
 
     internal async Task ExecuteAsync(Transition<TState, TCommand> transition)
     {

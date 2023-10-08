@@ -59,43 +59,94 @@ public class StateMachine<TState, TCommand> where TCommand : notnull where TStat
         return state;
     }
 
+    #region Fire
+
+    public bool Fire<TCommandParams, TIfParams>(TCommand command,
+        TCommandParams commandParams,
+        TIfParams ifParams)
+    {
+        if (!TryGetCommandConfiguration(command, out var commandConfiguration))
+        {
+            return false;
+        }
+
+        var transition = new Transition<TState, TCommand>(_currentStat,
+            commandConfiguration.Next,
+            command,
+            commandParams,
+            ifParams);
+
+        if (!commandConfiguration.Can(transition))
+        {
+            return false;
+        }
+
+        commandConfiguration.Execute(transition);
+
+        foreach (var onTransactionBehavior in _onTransactionBehaviors)
+        {
+            onTransactionBehavior.Execute(transition);
+        }
+
+        _currentStat = transition.Next;
+        return true;
+    }
+
+
+    public bool Fire(TCommand command)
+    {
+        return Fire<IParameterless, IParameterless>(command, null!, null!);
+    }
+
+    public bool FireWithCommandParams<TCommandParams>(
+        TCommand command,
+        TCommandParams commandParams)
+    {
+        return Fire<TCommandParams, IParameterless>(command, commandParams, null!);
+    }
+
+    public bool FireWithIfParams<TIfParams>(
+        TCommand command,
+        TIfParams ifParams)
+    {
+        return Fire<IParameterless, TIfParams>(command, null!, ifParams);
+    }
+
+    #endregion
+
     #region FireAsync
 
     public async ValueTask<bool> FireAsync<TCommandParams, TIfParams>(TCommand command,
         TCommandParams commandParams,
         TIfParams ifParams)
     {
-        if (!_dic.TryGetValue(_currentStat, out var stat))
-        {
-            return false;
-        }
-
-        if (!stat.CommandBehaviour(command, out var internalCommand))
+        if (!TryGetCommandConfiguration(command, out var commandConfiguration))
         {
             return false;
         }
 
         var transition = new Transition<TState, TCommand>(_currentStat,
-            internalCommand.Next,
+            commandConfiguration.Next,
             command,
             commandParams,
             ifParams);
 
-        if (!await internalCommand.CanAsync(transition))
+        if (!await commandConfiguration.CanAsync(transition))
         {
             return false;
         }
 
-        await internalCommand.ExecuteAsync(transition);
+        await commandConfiguration.ExecuteAsync(transition);
 
         foreach (var onTransactionBehavior in _onTransactionBehaviors)
         {
             await onTransactionBehavior.ExecuteAsync(transition);
         }
 
-        _currentStat = internalCommand.Next;
+        _currentStat = transition.Next;
         return true;
     }
+
 
     public async ValueTask<bool> FireAsync(TCommand command)
     {
@@ -117,4 +168,10 @@ public class StateMachine<TState, TCommand> where TCommand : notnull where TStat
     }
 
     #endregion
+
+    private bool TryGetCommandConfiguration(TCommand command, out CommandConfiguration<TState, TCommand> commandConfiguration)
+    {
+        commandConfiguration = null!;
+        return _dic.TryGetValue(_currentStat, out var stat) && stat.CommandBehaviour(command, out commandConfiguration);
+    }
 }
