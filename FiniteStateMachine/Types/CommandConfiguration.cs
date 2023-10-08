@@ -3,19 +3,19 @@
 public class CommandConfiguration<TState, TCommand>
 {
     internal readonly TState Next;
-    private readonly InternalState<TState, TCommand> _internalState;
+    private readonly StateConfiguration<TState, TCommand> _stateConfiguration;
     private readonly List<Behavior<TState, TCommand, Transition<TState, TCommand>>> _actionBehaviors = new();
     private readonly List<IfBehavior<TState, TCommand>> _ifBehaviors = new();
 
 
-    public CommandConfiguration(InternalState<TState, TCommand> internalState, TState next)
+    public CommandConfiguration(StateConfiguration<TState, TCommand> stateConfiguration, TState next)
     {
         Next = next;
-        _internalState = internalState;
+        _stateConfiguration = stateConfiguration;
     }
 
     public CommandConfiguration<TState, TCommand> OrAllow(TCommand command, TState nextState) =>
-        _internalState.Allow(command, nextState);
+        _stateConfiguration.Allow(command, nextState);
 
 
     #region If

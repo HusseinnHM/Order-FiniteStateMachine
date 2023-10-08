@@ -4,7 +4,7 @@ namespace FiniteStateMachine;
 
 public class StateMachine<TState, TCommand> where TCommand : notnull where TState : notnull
 {
-    private readonly ConcurrentDictionary<TState, InternalState<TState, TCommand>> _dic;
+    private readonly ConcurrentDictionary<TState, StateConfiguration<TState, TCommand>> _dic;
 
     private readonly List<Behavior<TState, TCommand, Transition<TState, TCommand>>> _onTransactionBehaviors = new();
     private TState _currentStat;
@@ -46,7 +46,7 @@ public class StateMachine<TState, TCommand> where TCommand : notnull where TStat
 
     public void Start(TState current) => _currentStat = current;
 
-    public InternalState<TState, TCommand> When(TState currentState)
+    public StateConfiguration<TState, TCommand> When(TState currentState)
     {
         if (_dic.TryGetValue(currentState, out var state))
         {

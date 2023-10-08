@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 namespace FiniteStateMachine;
 
-public class InternalState<TState, TCommand> where TCommand : notnull
+public class StateConfiguration<TState, TCommand> where TCommand : notnull
 {
     private readonly ConcurrentDictionary<TCommand,CommandConfiguration<TState, TCommand>> _commands = new();
 
